@@ -47,7 +47,7 @@ async def main(file_path,base_url,user,password):
 
 if __name__ == "__main__":
     file_path = './user-data/url_paths.json'
-    base_url = f'https://www.example.com' #add you URL
+    base_url = f'https://www.example.com' #add you URL, ommit using the final rorward slash"/"
     user = '' #add Username
     password = '' #add Password
     asyncio.run(main(file_path,base_url,user,password))
