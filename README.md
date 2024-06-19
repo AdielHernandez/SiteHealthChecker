@@ -7,7 +7,6 @@ Before running the script, ensure you have Python 3.7+ installed along with the 
 
 ```bash
 pip install aiohttp
-pip install asyncio
 ```
 
 
