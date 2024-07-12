@@ -40,7 +40,7 @@ if __name__ == "__main__":
 Run the script using the following command:
 
 ```bash
-python3 async_web_response.py
+python3 healthcheckerhealth.py
 ```
 
 # Output
@@ -55,5 +55,7 @@ load_urls(file_path): Loads URL paths from a specified JSON file.
 fetch(session, url, user, password): Asynchronously fetches a URL with basic authentication, handling retries and printing status messages for various HTTP response codes and errors.
 
 get_tasks(session, urls, base_url, user, password): Creates a list of asynchronous tasks for each URL path, combining the base URL with each path.
+
+clean_data(raw_data): Convert all collected data into a CSV file for easier viewing and comprehension by the user.
 
 main(file_path, base_url, user, password): Loads URLs, creates a session with a connection pool, and gathers the asynchronous tasks for execution.
