@@ -5,9 +5,6 @@ import time
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from random import random
-
-
 
 def load_urls(file_path:str) -> json:
     with open(file_path, 'r') as f:
@@ -15,22 +12,18 @@ def load_urls(file_path:str) -> json:
 
 async def fetch(session:aiohttp.client.ClientSession, url:str, user: str, password:str, _) -> str:
     # number of retrie to try before returnin a failed fetch
-    max_retries = 3
+    max_retries = 10
     for _ in range(max_retries):
         try:
             # makes a get to the url and checks the response
-            async with session.get(url, timeout=20, auth=aiohttp.BasicAuth(user, password)) as response:
+            async with session.get(url, timeout=200, auth=aiohttp.BasicAuth(user, password)) as response:
                 if response.status >= 500:
-                    await asyncio.sleep(random())
                     return f"{response.status} found at {url}"
                 elif response.status >= 400:
-                    await asyncio.sleep(random())
                     return f"{response.status} found at {url}"
                 elif response.status >= 300:
-                    await asyncio.sleep(random())
                     return f"{response.status} found at {url}"
                 elif response.status == 200:
-                    await asyncio.sleep(random())
                     return f"{response.status} found at {url}"
                 break
         except aiohttp.ClientError as e:
@@ -42,7 +35,7 @@ async def fetch(session:aiohttp.client.ClientSession, url:str, user: str, passwo
     else:
         return f"Failed to fetch {url} after {max_retries} attempts."
 
-def get_tasks(session:aiohttp.client.ClientSession, urls:str, base_url:str, user:str, password: str, _) -> list:
+def get_tasks(session:aiohttp.client.ClientSession, urls, base_url:str, user:str, password: str, _) -> list:
     tasks = []
     for paths in urls:
         url = f'{base_url}{paths}'
@@ -87,10 +80,11 @@ def clean_data(raw_data:list):
 
 async def main(file_path:str,base_url:str,user:str,password:str):
     urls = load_urls(file_path)
-    async with aiohttp.ClientSession(connector= aiohttp.TCPConnector(ssl=False, limit= 10)) as session:
+    async with aiohttp.ClientSession(connector= aiohttp.TCPConnector(ssl=False, limit= 5)) as session:
         tasks = get_tasks(session, urls, base_url, user, password, len(urls))
         progress_bar = tqdm(total=len(urls), desc="Fetching and Cleaning", position=0, leave=True)
         results = []
+        
         for task in asyncio.as_completed(tasks):
             result = await task
             results.append(result)
@@ -99,8 +93,8 @@ async def main(file_path:str,base_url:str,user:str,password:str):
         progress_bar.close()
 
 if __name__ == "__main__":
-    file_path = './user-data/url_paths.json'
-    base_url = f'https://www.google.com' #add you URL, ommit using the final rorward slash"/"
+    file_path = './user-data/updatedUris.json'
+    base_url = f'https://google.com' #add you URL, ommit using the final rorward slash"/"
     user = '' #add Username
     password = '' #add Password
     asyncio.run(main(file_path,base_url,user,password))
